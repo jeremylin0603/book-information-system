@@ -24,8 +24,7 @@ jobs:
 
       - name: deploy to gh-pages
         run: |
-          ls
-          cd $PUBLISH_DIR
+          cd dist
           git init
           git config --local user.email $USER_NAME
           git config --local user.name $USER_EMAIL
