@@ -16,9 +16,8 @@
       "webpack-env"
     ],
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"],
+      "~/*": ["typings/*"]
     },
     "lib": [
       "esnext",
@@ -28,11 +27,8 @@
     ]
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "src",
+    "typings"
   ],
   "exclude": [
     "node_modules"
