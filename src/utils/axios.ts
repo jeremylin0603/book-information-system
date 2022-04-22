@@ -1,12 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios'
 
-const corsSkipUrl = 'https://cors-anywhere-dot-vr-cam-161603.uc.r.appspot.com/'
-const domain = 'https://demo.api-platform.com'
-const service = axios.create({
-  baseURL: corsSkipUrl + domain,
-  timeout: 20 * 1000
-})
+import type { AxiosRequestConfig } from 'axios'
+
+const CORS_SKIP_URL = 'https://cors-anywhere-dot-vr-cam-161603.uc.r.appspot.com/'
+const API_DOMAIN = 'https://demo.api-platform.com'
+const TIME_OUT_SEC = 20
+
+const axiosRequestConfig: AxiosRequestConfig = {
+  baseURL: CORS_SKIP_URL + API_DOMAIN,
+  timeout: TIME_OUT_SEC * 1000
+}
+
+const service = axios.create(axiosRequestConfig)
 
 // 請求攔截
 service.interceptors.request.use(
