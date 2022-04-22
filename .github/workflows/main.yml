@@ -10,6 +10,9 @@ jobs:
     name: Build Web
     env:
       MY_SECRETS: ${{secrets.token}}
+      PUBLISH_DIR: ./dist
+      USER_NAME: jeremy
+      USER_EMAIL: jeremyl0603@gmail.com
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +27,7 @@ jobs:
 
       - name: deploy to gh-pages
         run: |
-          cd dist
+          cd $PUBLISH_DIR
           git init
           git config --local user.email $USER_NAME
           git config --local user.name $USER_EMAIL
