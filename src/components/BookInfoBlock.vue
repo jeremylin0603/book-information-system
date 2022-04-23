@@ -29,19 +29,21 @@ const props = defineProps({
 </script>
 
 <style lang="sass" scoped>
+$block_height: 160px
+
 .book_info_block_root
   display: flex
   width: 360px
-  height: 160px
+  height: $block_height
   border: solid 1px #333
 
   .img_wrap
-    display: flex
-    align-items: center
-    width: 160px
-    min-width: 160px
+    +flex_center
+    +size($block_height)
+    min-width: $block_height
     .img
-      width: 100%
+      max-width: 100%
+      max-height: 100%
 
   .info_wrap
     display: flex

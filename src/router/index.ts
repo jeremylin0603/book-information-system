@@ -2,20 +2,20 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 
 export enum RouterNameEnum {
   homeView = 'homeView',
-  modifyView = 'modifyView'
+  detailView = 'detailView'
 }
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: RouterNameEnum.homeView,
-    component: () => import('@/views/HomeView.vue'),
+    component: () => import('@/views/HomeView/index.vue'),
     meta: { isKeepAlive: true }
   },
   {
-    path: '/modify-view',
-    name: RouterNameEnum.modifyView,
-    component: () => import('@/views/ModifyView.vue'),
+    path: '/detail-view',
+    name: RouterNameEnum.detailView,
+    component: () => import('@/views/DetailView/index.vue'),
     props: true
   }
 ]

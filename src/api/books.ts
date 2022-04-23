@@ -1,16 +1,19 @@
 import api from '@/utils/axios'
 
-interface GetBooksReq {
+export interface GetBooksReq {
   page: number
   itemsPerPage: number
 }
 
 export interface GetBooksRes {
   'hydra:member': Array<BookInfo>
+  'hydra:totalItems': number
 }
 
-// 僅對作業需求作最低限度類型聲明
+// 僅對作業需求作最低限度類型聲明, '@id' 因取值麻煩, 轉成一般命名 'id'
 export interface BookInfo {
+  '@id'?: string
+  id?: string
   title: string
   author: string
   isbn: string
