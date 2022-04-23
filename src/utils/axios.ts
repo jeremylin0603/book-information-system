@@ -59,11 +59,14 @@ export default {
     })
   },
 
-  patch(url: string, data: BaseObj) {
+  mergePatch(url: string, data: BaseObj) {
     return service({
       method: 'PATCH',
       url,
-      data
+      data,
+      headers: {
+        'Content-Type': 'application/merge-patch+json'
+      }
     })
   },
 

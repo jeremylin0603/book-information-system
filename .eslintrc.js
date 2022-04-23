@@ -7,7 +7,8 @@ module.exports = {
   // 參考連結：https://v3.cn.vuejs.org/api/sfc-script-setup.html#defineprops-%E5%92%8C-defineemits
   globals: {
     defineEmits: true,
-    defineProps: true
+    defineProps: true,
+    BaseObj: true
   },
   extends: [
     'plugin:vue/vue3-essential',

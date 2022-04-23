@@ -8,7 +8,7 @@
       @click:right-button="handleEditBtn"
     >
       <template #right>
-        <EditBook></EditBook>
+        <EditBook :id="props.id" :book-info="bookInfo" @update:book-info="handleReload"></EditBook>
       </template>
     </BaseHeader>
 
@@ -28,7 +28,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, onMounted } from 'vue'
 import * as api from '@/api/books'
 import { getTime } from '@/utils/time'
 import { useRouter } from 'vue-router'
@@ -50,15 +50,23 @@ const props = defineProps({
 })
 const bookInfo = ref<BookInfo>({} as BookInfo)
 const { createBookInfo } = useBooksInfo()
-api.getBookDetail(props.id).then(({ data }) => {
-  const _bookInfo = createBookInfo(data)
-  _bookInfo.publicationDate = formatDate(_bookInfo.publicationDate)
-  bookInfo.value = _bookInfo
-})
+const initBookDetail = () => {
+  api.getBookDetail(props.id).then(({ data }) => {
+    const _bookInfo = createBookInfo(data)
+    _bookInfo.publicationDate = formatDate(_bookInfo.publicationDate)
+    bookInfo.value = _bookInfo
+  })
+}
+
+onMounted(initBookDetail)
 
 const formatDate = (d: string) => {
   const { year, month, date, hour, minutes } = getTime(d)
   return `${year}/${month}/${date} ${hour}:${minutes}`
+}
+
+const handleReload = () => {
+  initBookDetail()
 }
 
 const router = useRouter()

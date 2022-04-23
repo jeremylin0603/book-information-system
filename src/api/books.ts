@@ -22,10 +22,22 @@ export interface BookInfo {
   imgUrl?: string
 }
 
+export interface EditBookInfoReq {
+  title?: string
+  author?: string
+  isbn?: string
+  publicationDate?: string
+  description?: string
+}
+
 export const getBooks = (params: GetBooksReq): BaseRes<GetBooksRes> => {
   return api.get('/books', params)
 }
 
 export const getBookDetail = (id: string): BaseRes<BookInfo> => {
   return api.get(`/books/${id}`)
+}
+
+export const editBookDetail = (id: string, data: EditBookInfoReq): BaseRes<BookInfo> => {
+  return api.mergePatch(`/books/${id}`, data)
 }
