@@ -6,7 +6,11 @@
       @click:left-button="handleBackBtn"
       right-button-text="Edit"
       @click:right-button="handleEditBtn"
-    ></BaseHeader>
+    >
+      <template #right>
+        <EditBook></EditBook>
+      </template>
+    </BaseHeader>
 
     <main class="main">
       <div class="img_wrap">
@@ -31,6 +35,7 @@ import { useRouter } from 'vue-router'
 import { RouterNameEnum } from '@/router'
 
 import BaseHeader from '@/components/BaseHeader.vue'
+import EditBook from './EditBook.vue'
 
 import useBooksInfo from '@/views/HomeView/composables/useBooksInfo'
 
