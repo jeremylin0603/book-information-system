@@ -13,7 +13,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { isKeepAlive: true }
   },
   {
-    path: '/detail-view',
+    path: '/detail-view/:id',
     name: RouterNameEnum.detailView,
     component: () => import('@/views/DetailView/index.vue'),
     props: true

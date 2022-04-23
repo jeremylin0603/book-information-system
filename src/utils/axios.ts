@@ -35,7 +35,7 @@ service.interceptors.response.use(
 )
 
 export default {
-  get(url: string, params: BaseObj) {
+  get(url: string, params?: BaseObj) {
     return service({
       method: 'get',
       url,

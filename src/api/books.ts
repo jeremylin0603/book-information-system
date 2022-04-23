@@ -24,3 +24,7 @@ export interface BookInfo {
 export const getBooks = (params: GetBooksReq): BaseRes<GetBooksRes> => {
   return api.get('/books', params)
 }
+
+export const getBookDetail = (id: string): BaseRes<BookInfo> => {
+  return api.get(`/books/${id}`)
+}
