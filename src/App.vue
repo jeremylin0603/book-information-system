@@ -1,6 +1,18 @@
 <template>
-  <router-view />
+  <!-- v-slot 可以將指定參數暴露給 router-view 的 slot 子元素 -->
+  <router-view v-slot="{ Component }">
+    <!-- include: only components with names matched by `include` will be cached. -->
+    <keep-alive :include="cachedViews">
+      <component :is="Component"></component>
+    </keep-alive>
+  </router-view>
 </template>
+
+<script setup lang="ts">
+import useCachedViews from '@/composables/useCachedView'
+
+const { cachedViews } = useCachedViews()
+</script>
 
 <style lang="sass">
 #app
