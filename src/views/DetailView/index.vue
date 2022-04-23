@@ -1,14 +1,42 @@
 <template>
-  <div class="modify_view_root">
-    <pre>{{ bookInfo }}</pre>
+  <div class="detail_view_root">
+    <BaseHeader
+      :title="bookInfo.title"
+      left-button-text="Back"
+      @click:left-button="handleBackBtn"
+      right-button-text="Edit"
+      @click:right-button="handleEditBtn"
+    ></BaseHeader>
+
+    <main class="main">
+      <div class="img_wrap">
+        <img class="img" :src="imgUrl" />
+      </div>
+
+      <div class="info_wrap">
+        <div class="title mb-10">{{ bookInfo.title }}</div>
+        <div class="author mb-10">{{ bookInfo.author }}</div>
+        <div class="time mb-10">Published on {{ bookInfo.publicationDate }}</div>
+        <div class="description mb-10">{{ bookInfo.description }}</div>
+        <div class="isbn">ISBN: {{ bookInfo.isbn }}</div>
+      </div>
+    </main>
   </div>
 </template>
 <script setup lang="ts">
 import { ref, defineProps } from 'vue'
 import * as api from '@/api/books'
+import { getTime } from '@/utils/time'
+import { useRouter } from 'vue-router'
+import { RouterNameEnum } from '@/router'
+
+import BaseHeader from '@/components/BaseHeader.vue'
+
+import useBooksInfo from '@/views/HomeView/composables/useBooksInfo'
 
 import type { BookInfo } from '@/api/books'
 
+const imgUrl = 'https://picsum.photos/800/600'
 const props = defineProps({
   id: {
     type: String,
@@ -16,10 +44,49 @@ const props = defineProps({
   }
 })
 const bookInfo = ref<BookInfo>({} as BookInfo)
+const { createBookInfo } = useBooksInfo()
 api.getBookDetail(props.id).then(({ data }) => {
-  bookInfo.value = data
+  const _bookInfo = createBookInfo(data)
+  _bookInfo.publicationDate = formatDate(_bookInfo.publicationDate)
+  bookInfo.value = _bookInfo
 })
+
+const formatDate = (d: string) => {
+  const { year, month, date, hour, minutes } = getTime(d)
+  return `${year}/${month}/${date} ${hour}:${minutes}`
+}
+
+const router = useRouter()
+const handleBackBtn = () => {
+  router.push({ name: RouterNameEnum.homeView })
+}
+
+const handleEditBtn = () => {
+  console.log('handleEditBtn')
+}
 </script>
 <style lang="sass" scoped>
-// .modify_view_root
+$main_height: 226px
+.mb-10
+  margin-bottom: 10px
+.detail_view_root
+  .main
+    display: flex
+    margin: 0 auto
+    +size(462px, $main_height)
+
+    .img_wrap
+      +flex_center
+      +size($main_height)
+      min-width: $main_height
+      .img
+        max-width: 100%
+        max-height: 100%
+
+    .info_wrap
+      .title
+        font-size: 18px
+      .author
+        font-size: 12px
+        color: #333
 </style>

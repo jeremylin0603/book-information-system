@@ -20,7 +20,7 @@ import { RouterNameEnum } from '@/router'
 import { setBookInfo } from '@/utils/storage'
 
 import BaseHeader from '@/components/BaseHeader.vue'
-import BookInfoBlock from '@/components/BookInfoBlock.vue'
+import BookInfoBlock from './BookInfoBlock.vue'
 
 import useBooksInfo from './composables/useBooksInfo'
 

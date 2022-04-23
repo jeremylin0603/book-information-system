@@ -14,6 +14,7 @@ interface FnReturn {
   pageSetting: PageSetting
   bookInfoGroup: Ref<BookInfoGroup>
   getBooksInfo: () => Promise<void>
+  createBookInfo: (bookInfo: BookInfo) => BookInfo
 }
 
 export default function useBooksInfo(): FnReturn {
@@ -70,6 +71,7 @@ export default function useBooksInfo(): FnReturn {
   return {
     pageSetting,
     bookInfoGroup,
-    getBooksInfo
+    getBooksInfo,
+    createBookInfo
   }
 }

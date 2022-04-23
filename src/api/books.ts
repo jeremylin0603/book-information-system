@@ -19,6 +19,7 @@ export interface BookInfo {
   isbn: string
   publicationDate: string
   description: string
+  imgUrl?: string
 }
 
 export const getBooks = (params: GetBooksReq): BaseRes<GetBooksRes> => {
