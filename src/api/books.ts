@@ -10,7 +10,7 @@ export interface GetBooksRes {
   'hydra:totalItems': number
 }
 
-// 僅對作業需求作最低限度類型聲明, '@id' 因取值麻煩, 轉成一般命名 'id'
+// 僅對作業需求作最低限度類型聲明, '@id' 因過工廠模式後不好取值, 直接轉成正常命名 'id'
 export interface BookInfo {
   '@id'?: string
   id?: string
@@ -19,7 +19,6 @@ export interface BookInfo {
   isbn: string
   publicationDate: string
   description: string
-  imgUrl?: string
 }
 
 export interface EditBookInfoReq {

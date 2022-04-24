@@ -28,9 +28,8 @@ const imgUrl = 'https://picsum.photos/800/600'
 
 const { pageSetting, bookInfoGroup, getBooksInfo } = useBooksInfo()
 
+const router = useRouter()
 const handleBookInfoClick = (bookInfo: BookInfo) => {
-  const router = useRouter()
-  // 考量專案大小和網址長度, 在 route-query, vuex, storage 三者跳轉傳參方式中選擇了較方便的 storage
   const id = getBookId(bookInfo.id as string)
   router.push({ name: RouterNameEnum.detailView, params: { id } })
 }

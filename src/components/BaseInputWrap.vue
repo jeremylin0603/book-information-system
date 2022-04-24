@@ -3,10 +3,12 @@
     <div class="base_input_wrap_root">
       <div class="title" :class="{ required_mark: props.isRequired }">{{ props.title }}</div>
       <slot></slot>
+      <div class="err_msg" v-show="showErrMsg">{{ props.errorMessage }}</div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
+// TODO: 把顯示 error msg 的邏輯收進來, blur 時驗證
 const props = defineProps({
   title: {
     type: String,
@@ -15,6 +17,14 @@ const props = defineProps({
   isRequired: {
     type: Boolean,
     default: false
+  },
+  showErrMsg: {
+    type: Boolean,
+    default: false
+  },
+  errorMessage: {
+    type: String,
+    default: '資料不得為空值'
   }
 })
 </script>
