@@ -16,10 +16,10 @@
         ></BookInfoBlock>
       </div>
     </main>
-    <div v-if="pageSetting.hasNextPage" class="load_more" @click="getBooksInfo">Load More</div>
   </div>
 </template>
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { RouterNameEnum } from '@/router'
 import * as api from '@/api/books'
@@ -51,11 +51,38 @@ const handleBookInfoCreate = async (createObj: BookInfo) => {
   initBooksInfo()
   routeToBookDetail(data['@id'] as string)
 }
+
+// TODO: 做個載入動畫
+let isLoading = ref<boolean>(false)
+const handleScrollEvent = async () => {
+  // 需阻擋載入中狀態, 否則會多次觸發 callback fn
+  if (isLoading.value) return
+  // 若已載完所有資料則移除事件註冊
+  if (!pageSetting.value.hasNextPage) {
+    window.removeEventListener('scroll', handleScrollEvent)
+  }
+
+  // 滾動過的距離
+  const { scrollY } = window
+  // 螢幕高度
+  const screenHeight = window.screen.height
+  // 頁面總高度
+  const pageTotalHeight = document.body.scrollHeight
+  // 若滾動過的距離 + 螢幕高度 >= 頁面總高度, 則視同觸及底部
+  const isCloseBottom = scrollY + screenHeight >= pageTotalHeight
+  if (isCloseBottom) {
+    isLoading.value = true
+    await getBooksInfo()
+    isLoading.value = false
+  }
+}
+window.addEventListener('scroll', handleScrollEvent)
 </script>
 
 <script lang="ts">
 import * as TempRouter from '@/router'
-// setup script 的坑, 無法捕捉 setup-SFC 的 fileName 來讓 keep-alive 識別
+// 額外設置 name 屬性供 keep-alive 識別
+// setup-SFC 目前無法自動捕捉 fileName 來設定 name 屬性
 // ref issue: https://github.com/vuejs/core/issues/4993
 export default {
   name: TempRouter.RouterNameEnum.homeView
