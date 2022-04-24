@@ -12,14 +12,15 @@
           :is-required="config.isRequired"
           :show-err-msg="missingRequiredData.includes(key)"
         >
-          <input v-if="config.inputType === 'input'" type="text" v-model="config.value" />
-          <input
-            v-if="config.inputType === 'datetime'"
-            type="datetime-local"
+          <!-- TODO: publicationDate 換成好用一點的時間套件, 或有空寫一個 -->
+          <Datepicker
+            v-if="config.inputType === 'datepicker'"
             v-model="config.value"
-            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}"
-            required
+            startingView="day"
+            minimumView="time"
+            inputFormat="yyyy/MM/dd hh:mm"
           />
+          <input v-if="config.inputType === 'input'" type="text" v-model="config.value" />
           <textarea v-if="config.inputType === 'textarea'" cols="16" rows="4" v-model="config.value"></textarea>
         </BaseInputWrap>
 
@@ -34,6 +35,7 @@ import { deepClone } from '@/utils/format'
 
 import BaseDialog from '@/components/BaseDialog.vue'
 import BaseInputWrap from '@/components/BaseInputWrap.vue'
+import Datepicker from 'vue3-datepicker'
 
 import type { BookInfo, UpdateBookInfoReq } from '@/api/books'
 import type { PropType } from 'vue'
@@ -58,7 +60,7 @@ interface FormEl {
   title: string
   inputType: string
   isRequired: boolean
-  value: string
+  value: string | Date
 }
 
 interface FormData {
@@ -96,8 +98,8 @@ const createFormData = (bookInfo: BookInfo): FormData => {
     publicationDate: {
       title: 'Pub date',
       isRequired: true,
-      inputType: 'datetime',
-      value: _bookInfo?.publicationDate
+      inputType: 'datepicker',
+      value: new Date(_bookInfo?.publicationDate)
     },
     isbn: {
       title: 'ISBN',
