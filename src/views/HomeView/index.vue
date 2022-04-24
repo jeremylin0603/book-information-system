@@ -12,7 +12,7 @@
           :title="bookInfo.title"
           :author="bookInfo.author"
           :img-url="imgUrl"
-          @click="handleBookInfoClick(bookInfo)"
+          @click="routeToBookDetail(bookInfo.id)"
         ></BookInfoBlock>
       </div>
     </main>
@@ -36,19 +36,20 @@ const imgUrl = 'https://picsum.photos/800/600'
 const { pageSetting, bookInfoGroup, getBooksInfo, initBooksInfo } = useBooksInfo()
 
 const router = useRouter()
-const handleBookInfoClick = (bookInfo: BookInfo) => {
-  const id = getBookId(bookInfo.id as string)
-  router.push({ name: RouterNameEnum.detailView, params: { id } })
+const routeToBookDetail = (bookInfoId: string) => {
+  const targetId = getBookId(bookInfoId as string)
+  router.push({ name: RouterNameEnum.detailView, params: { id: targetId } })
 }
 
-const getBookId = (id: string) => {
-  const targetId = id.split('/')[2]
+const getBookId = (bookInfoId: string) => {
+  const targetId = bookInfoId.split('/')[2]
   return targetId
 }
 
 const handleBookInfoCreate = async (createObj: BookInfo) => {
-  await api.createBookDetail(createObj)
+  const { data } = await api.createBookDetail(createObj)
   initBooksInfo()
+  routeToBookDetail(data['@id'] as string)
 }
 </script>
 
