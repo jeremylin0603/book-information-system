@@ -1,8 +1,10 @@
 <template>
   <div>
     <div class="base_input_wrap_root">
-      <div class="title" :class="{ required_mark: props.isRequired }">{{ props.title }}</div>
-      <slot></slot>
+      <div class="input_wrap">
+        <div class="title" :class="{ required_mark: props.isRequired }">{{ props.title }}</div>
+        <slot></slot>
+      </div>
       <div class="err_msg" v-show="showErrMsg">{{ props.errorMessage }}</div>
     </div>
   </div>
@@ -30,14 +32,19 @@ const props = defineProps({
 </script>
 <style lang="sass" scoped>
 .base_input_wrap_root
-  display: flex
-  .title
-    width: fit-content
-    min-width: 120px
-    text-align: left
-  .required_mark
-    &::after
-      content: '*'
-      margin-left: 2px
-      color: red
+  .input_wrap
+    display: flex
+    .title
+      width: fit-content
+      min-width: 120px
+      text-align: left
+    .required_mark
+      &::after
+        content: '*'
+        margin-left: 2px
+        color: red
+  .err_msg
+    font-size: 12px
+    color: red
+    line-height: 16px
 </style>

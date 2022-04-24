@@ -1,6 +1,11 @@
 <template>
   <div class="home_view_root">
-    <BaseHeader title="The book shelf" right-button-text="Create" @click:right-button="handleCreate"></BaseHeader>
+    <BaseHeader title="The book shelf">
+      <template #right>
+        <UpdateBook button-text="Create" @create:book-info="handleBookInfoCreate"></UpdateBook>
+      </template>
+    </BaseHeader>
+
     <main class="main">
       <div class="block_wrap" v-for="bookInfo in bookInfoGroup" :key="bookInfo.isbn">
         <BookInfoBlock
@@ -17,16 +22,18 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { RouterNameEnum } from '@/router'
+import * as api from '@/api/books'
 
 import BaseHeader from '@/components/BaseHeader.vue'
 import BookInfoBlock from './BookInfoBlock.vue'
+import UpdateBook from '@/components/UpdateBook.vue'
 
 import useBooksInfo from './composables/useBooksInfo'
 
 import type { BookInfo } from '@/api/books'
 const imgUrl = 'https://picsum.photos/800/600'
 
-const { pageSetting, bookInfoGroup, getBooksInfo } = useBooksInfo()
+const { pageSetting, bookInfoGroup, getBooksInfo, initBooksInfo } = useBooksInfo()
 
 const router = useRouter()
 const handleBookInfoClick = (bookInfo: BookInfo) => {
@@ -39,8 +46,9 @@ const getBookId = (id: string) => {
   return targetId
 }
 
-const handleCreate = () => {
-  console.log('click create')
+const handleBookInfoCreate = async (createObj: BookInfo) => {
+  await api.createBookDetail(createObj)
+  initBooksInfo()
 }
 </script>
 

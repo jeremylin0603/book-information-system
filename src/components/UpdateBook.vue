@@ -1,9 +1,10 @@
 <template>
   <div class="edit_book_root">
-    <div class="button" @click="openDialog">Edit</div>
+    <div class="button" @click="openDialog">{{ props.buttonText }}</div>
+
     <BaseDialog v-model:is-dialog-open="isDialogOpen">
       <div class="form_container">
-        <div class="close_icon">X</div>
+        <div class="close_icon" @click="closeDialog">X</div>
         <BaseInputWrap
           v-for="(config, key) in formData"
           :key="key"
@@ -11,7 +12,15 @@
           :is-required="config.isRequired"
           :show-err-msg="missingRequiredData.includes(key)"
         >
-          <input :type="config.inputType" v-model="config.value" />
+          <input v-if="config.inputType === 'input'" type="text" v-model="config.value" />
+          <input
+            v-if="config.inputType === 'datetime'"
+            type="datetime-local"
+            v-model="config.value"
+            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}"
+            required
+          />
+          <textarea v-if="config.inputType === 'textarea'" cols="16" rows="4" v-model="config.value"></textarea>
         </BaseInputWrap>
 
         <div class="button" @click="handleSave">Save</div>
@@ -20,29 +29,29 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { deepClone } from '@/utils/format'
-import * as api from '@/api/books'
 
 import BaseDialog from '@/components/BaseDialog.vue'
 import BaseInputWrap from '@/components/BaseInputWrap.vue'
 
-import type { BookInfo } from '@/api/books'
+import type { BookInfo, UpdateBookInfoReq } from '@/api/books'
 import type { PropType } from 'vue'
 
 const props = defineProps({
-  id: {
+  buttonText: {
     type: String,
     required: true
   },
   bookInfo: {
     type: Object as PropType<BookInfo>,
-    required: true
+    default: null
   }
 })
 
 const emits = defineEmits<{
-  (e: 'update:bookInfo'): void
+  (e: 'update:bookInfo', formData: UpdateBookInfoReq): void
+  (e: 'create:bookInfo', formData: BookInfo): void
 }>()
 
 interface FormEl {
@@ -65,6 +74,7 @@ const initFormData = () => {
   formData.value = createFormData(props.bookInfo)
   missingRequiredData.value = []
 }
+onMounted(initFormData)
 watch(() => props.bookInfo, initFormData)
 
 const createFormData = (bookInfo: BookInfo): FormData => {
@@ -74,32 +84,32 @@ const createFormData = (bookInfo: BookInfo): FormData => {
     title: {
       title: 'Name',
       isRequired: true,
-      inputType: 'text',
-      value: _bookInfo.title
+      inputType: 'input',
+      value: _bookInfo?.title
     },
     author: {
       title: 'Author',
       isRequired: true,
-      inputType: 'text',
-      value: _bookInfo.author
+      inputType: 'input',
+      value: _bookInfo?.author
     },
     publicationDate: {
       title: 'Pub date',
       isRequired: true,
-      inputType: 'text',
-      value: _bookInfo.publicationDate
+      inputType: 'datetime',
+      value: _bookInfo?.publicationDate
     },
     isbn: {
       title: 'ISBN',
       isRequired: false,
-      inputType: 'text',
-      value: _bookInfo.isbn
+      inputType: 'input',
+      value: _bookInfo?.isbn
     },
     description: {
       title: 'Description',
       isRequired: true,
-      inputType: 'text',
-      value: _bookInfo.description
+      inputType: 'textarea',
+      value: _bookInfo?.description
     }
   }
 }
@@ -116,13 +126,17 @@ const handleSave = async () => {
     acc[key] = config.value
     return acc
   }, {} as BaseObj)
-  const diffData = getDiffData(props.bookInfo, formDataForDiff)
 
-  // 若資料有變化則做 api 請求
-  if (Object.keys(diffData).length !== 0) {
-    await api.editBookDetail(props.id, diffData)
-    emits('update:bookInfo')
+  const isUpdate = props.bookInfo !== null
+  if (isUpdate) {
+    const updateData = getDiffData(props.bookInfo, formDataForDiff)
+    if (Object.keys(updateData).length !== 0) {
+      emits('update:bookInfo', updateData)
+    }
+  } else {
+    emits('create:bookInfo', formDataForDiff as BookInfo)
   }
+
   closeDialog()
 }
 
@@ -130,7 +144,8 @@ const handleSave = async () => {
 const checkRequiredData = (formData: FormData): Array<string> => {
   return Object.entries(formData).reduce((acc, [key, config]) => {
     const isRequired = config.isRequired
-    const isEmptyValue = config.value.length === 0
+    const isEmptyValue = !config.value || config.value.length === 0
+
     if (isRequired && isEmptyValue) acc.push(key)
     return acc
   }, [] as Array<string>)
@@ -139,9 +154,9 @@ const checkRequiredData = (formData: FormData): Array<string> => {
 // 回傳有異動的物件資料
 const getDiffData = (before: BaseObj, after: BaseObj) => {
   const requestObj: BaseObj = {}
-  Object.entries(before).forEach(([key, beforeVal]) => {
-    const afterVal = after[key]
-    if (beforeVal !== afterVal) requestObj[key] = afterVal
+  Object.entries(after).forEach(([key, afterVal]) => {
+    const beforeVal = before[key]
+    if (afterVal !== beforeVal) requestObj[key] = afterVal
   })
   return requestObj
 }
@@ -163,4 +178,8 @@ watch(isDialogOpen, isDialogOpen => {
   .form_container
     padding: 20px
     background-color: #FFF
+
+    .close_icon
+      text-align: right
+      cursor: pointer
 </style>

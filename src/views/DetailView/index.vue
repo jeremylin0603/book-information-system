@@ -1,14 +1,13 @@
 <template>
   <div class="detail_view_root">
-    <BaseHeader
-      :title="bookInfo.title"
-      left-button-text="Back"
-      @click:left-button="handleBackBtn"
-      right-button-text="Edit"
-      @click:right-button="handleEditBtn"
-    >
+    <BaseHeader :title="bookInfo.title" left-button-text="Back" @click:left-button="handleBackBtn">
       <template #right>
-        <EditBook :id="props.id" :book-info="bookInfo" @update:book-info="handleReload"></EditBook>
+        <UpdateBook
+          button-text="Edit"
+          :id="props.id"
+          :book-info="bookInfo"
+          @update:book-info="handleBookInfoUpdate"
+        ></UpdateBook>
       </template>
     </BaseHeader>
 
@@ -35,11 +34,11 @@ import { useRouter } from 'vue-router'
 import { RouterNameEnum } from '@/router'
 
 import BaseHeader from '@/components/BaseHeader.vue'
-import EditBook from './EditBook.vue'
+import UpdateBook from '../../components/UpdateBook.vue'
 
 import useBooksInfo from '@/views/HomeView/composables/useBooksInfo'
 
-import type { BookInfo } from '@/api/books'
+import type { BookInfo, UpdateBookInfoReq } from '@/api/books'
 
 const imgUrl = 'https://picsum.photos/800/600'
 const props = defineProps({
@@ -65,17 +64,14 @@ const formatDate = (d: string) => {
   return `${year}/${month}/${date} ${hour}:${minutes}`
 }
 
-const handleReload = () => {
+const handleBookInfoUpdate = async (reqData: UpdateBookInfoReq) => {
+  await api.editBookDetail(props.id, reqData)
   initBookDetail()
 }
 
 const router = useRouter()
 const handleBackBtn = () => {
   router.push({ name: RouterNameEnum.homeView })
-}
-
-const handleEditBtn = () => {
-  console.log('handleEditBtn')
 }
 </script>
 <style lang="sass" scoped>

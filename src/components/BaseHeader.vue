@@ -1,6 +1,6 @@
 <template>
   <div class="base_header_root">
-    <div v-if="useLeftButton" class="left_block">
+    <div class="left_block">
       <slot name="left">
         <div class="button" @click="handleLeftButton">
           {{ props.leftButtonText }}
@@ -14,7 +14,7 @@
       </slot>
     </div>
 
-    <div v-if="useRightButton" class="right_block">
+    <div class="right_block">
       <slot name="right">
         <div class="button" @click="handleRightButton">
           {{ props.rightButtonText }}

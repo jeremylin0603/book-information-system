@@ -11,29 +11,44 @@ interface PageSetting extends GetBooksReq {
 type BookInfoGroup = Array<BookInfo>
 
 interface FnReturn {
-  pageSetting: PageSetting
+  pageSetting: Ref<PageSetting>
   bookInfoGroup: Ref<BookInfoGroup>
   getBooksInfo: () => Promise<void>
   createBookInfo: (bookInfo: BookInfo) => BookInfo
+  initBooksInfo: () => void
 }
 
 export default function useBooksInfo(): FnReturn {
   const bookInfoGroup = ref<BookInfoGroup>([] as BookInfoGroup)
+  const pageSetting = ref<PageSetting>({} as PageSetting)
 
-  const pageSetting = reactive<PageSetting>({
-    page: 0,
-    itemsPerPage: 30,
-    hasNextPage: true
-  })
+  const initBooksInfo = () => {
+    createInitData()
+    getBooksInfo()
+  }
+
+  const createInitData = () => {
+    bookInfoGroup.value = []
+    pageSetting.value = {
+      page: 0,
+      itemsPerPage: 30,
+      hasNextPage: true
+    }
+  }
 
   const getBooksInfo = async () => {
-    if (pageSetting.hasNextPage) {
-      pageSetting.page++
-      const { page, itemsPerPage } = pageSetting
-      const data = await apiGetBooks({ page, itemsPerPage })
+    if (pageSetting.value.hasNextPage) {
+      pageSetting.value.page++
+      const { page, itemsPerPage } = pageSetting.value
+      const params = {
+        'order[publicationDate]': 'desc',
+        page,
+        itemsPerPage
+      }
+      const data = await apiGetBooks(params)
       const booksInfo = data['hydra:member']?.map(createBookInfo)
       bookInfoGroup.value.push(...booksInfo)
-      pageSetting.hasNextPage = checkHasNextPage(pageSetting, data['hydra:totalItems'])
+      pageSetting.value.hasNextPage = checkHasNextPage(pageSetting.value, data['hydra:totalItems'])
     }
   }
 
@@ -66,12 +81,13 @@ export default function useBooksInfo(): FnReturn {
     return loadedItemsCount < totalItems
   }
 
-  onMounted(getBooksInfo)
+  onMounted(initBooksInfo)
 
   return {
     pageSetting,
     bookInfoGroup,
     getBooksInfo,
-    createBookInfo
+    createBookInfo,
+    initBooksInfo
   }
 }

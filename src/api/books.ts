@@ -21,7 +21,7 @@ export interface BookInfo {
   description: string
 }
 
-export interface EditBookInfoReq {
+export interface UpdateBookInfoReq {
   title?: string
   author?: string
   isbn?: string
@@ -37,6 +37,10 @@ export const getBookDetail = (id: string): BaseRes<BookInfo> => {
   return api.get(`/books/${id}`)
 }
 
-export const editBookDetail = (id: string, data: EditBookInfoReq): BaseRes<BookInfo> => {
+export const editBookDetail = (id: string, data: UpdateBookInfoReq): BaseRes<BookInfo> => {
   return api.mergePatch(`/books/${id}`, data)
+}
+
+export const createBookDetail = (data: BookInfo): BaseRes<BookInfo> => {
+  return api.post('/books', data)
 }

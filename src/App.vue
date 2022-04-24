@@ -16,6 +16,7 @@ const { cachedViews } = useCachedViews()
 
 <style lang="sass">
 #app
+  min-width: 1150px
   font-family: Avenir, Helvetica, Arial, sans-serif
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
